@@ -1,0 +1,18 @@
+##########################################################################################
+# Install tied to specific python version (inside venv)
+##########################################################################################
+FROM python:3.12-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y && python -m venv /app/.venv
+RUN /app/.venv/bin/pip install poetry
+
+# # Option 1: Benchmark the installation
+# CMD ["bash", "-c", "source /app/.venv/bin/activate && poetry init -n && time poetry add requests flask pygame pyqt6 django"]
+# # pip-audit can't be installed 
+
+# # Option 2: Just install uv and give shell with activated venv 
+# RUN echo 'source /app/.venv/bin/activate' >> /root/.bashrc
+# CMD ["bash"]
+
+# Option 3: Benchmark the installation form cache
+CMD ["bash", "-c", "source /app/.venv/bin/activate && poetry init -n && time poetry add requests flask pygame pyqt6 django && time poetry remove flask pygame pyqt6 django && time poetry add requests flask pygame pyqt6 django"]
